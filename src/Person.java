@@ -1,10 +1,10 @@
-import java.util.ArrayList;
+import java.util.*;
 
 public class Person {
-    public String name;
-    public int regId;
+    private String name;
+    private int regId;
     
-    public ArrayList<Book> booksBorrowed = new ArrayList<>();
+    private ArrayList<Book> booksBorrowed = new ArrayList<>();
 
     Person(String name){
         this.name = name;
@@ -22,6 +22,10 @@ public class Person {
         return regId;
     }
 
+    public List<Book> getBooksborrowed(){
+        return booksBorrowed;
+    }
+
     public void addBook(Book book){
         booksBorrowed.add(book);
     }
@@ -30,4 +34,25 @@ public class Person {
         booksBorrowed.remove(book);
     }
 
+    public boolean checkBorrowed(String name){
+        for (Book book : booksBorrowed) {
+            if (book.getTitle().equalsIgnoreCase(name.trim())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if(this == obj) return true;
+        if(obj == null || getClass() != obj.getClass()) return false;
+        Person person = (Person) obj;
+        return name.equalsIgnoreCase(person.name);
+    }
+
+    @Override
+    public int hashCode(){
+        return Objects.hash(name.toLowerCase());
+    }
 }

@@ -42,6 +42,6 @@ public class Book {
     public void borrow(){
         System.out.println("Book borrowed: " + title);
         System.out.println("Author: " + author);
-        System.out.println("Happy Reading");
+        System.out.println("Happy Reading!!\n");
     }
 }
