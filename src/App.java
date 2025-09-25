@@ -18,9 +18,9 @@ public class App {
         if (identity.equals("student")) {
             System.out.print("Enter Your name: ");
             String name = scanner.nextLine();
-            Student student = new Student(name);
+            Student student = myLibrary.getStudent(name);
 
-            if(myLibrary.checkStudent(name)){
+            if(student != null){
                    while (isrunning) {
                     System.out.println("\n*****************");
                     System.out.println("     Welcome     ");
@@ -61,9 +61,9 @@ public class App {
         } else if (identity.equals("admin")) {
             System.out.print("Enter your name: ");
             String adminName = scanner.nextLine();
-            Admin admin = new Admin(adminName);
+            Admin admin = myLibrary.getAdmin(adminName);
             
-            if(myLibrary.checkAdmin(adminName)){            
+            if(admin != null){            
                 while (isrunning) {
                     System.out.println("\n*****************");
                     System.out.println("     Welcome     ");

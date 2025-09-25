@@ -48,11 +48,11 @@ public class Person {
         if(this == obj) return true;
         if(obj == null || getClass() != obj.getClass()) return false;
         Person person = (Person) obj;
-        return name.equalsIgnoreCase(person.name);
+        return regId == person.regId && name.equalsIgnoreCase(person.name);
     }
 
     @Override
     public int hashCode(){
-        return Objects.hash(name.toLowerCase());
+        return Objects.hash(name.toLowerCase(), regId);
     }
 }

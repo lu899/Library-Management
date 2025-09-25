@@ -5,36 +5,44 @@ public class Lib {
     private String LIBFILENAME = "libBooks.csv";
     private String STDFILENAME = "students.csv";
     private String ADMFILENAME = "admins.csv";
+    private String BORRFILENAME = "borrowed.csv";
    
     private List<Book> books = FileCSV.loadBooks(LIBFILENAME);
     private List<Student> registeredStudents = FileCSV.loadStudents(STDFILENAME);
     private List<Admin> admins = FileCSV.loadAdmins(ADMFILENAME);
+    private static HashMap<Person, List<Book>> map;
+
     Random random = new Random();
 
     Lib(String name){
         this.name = name;
+        map = FileCSV.loadBorrowedBooks(BORRFILENAME, registeredStudents, admins);
     }
 
     public String getName(){
         return name;
     }
 
-    public boolean checkStudent(String name){
-        for (Student student : registeredStudents) {
-            if (student.getName().equalsIgnoreCase(name.trim())) {
-                return true;
-            }
-        }
-        return false;
+    public static HashMap<Person, List<Book>> getHashMap(){
+        return map;
     }
 
-    public boolean checkAdmin(String adminName){
-        for (Admin admin : admins) {
-            if (admin.getName().equalsIgnoreCase(adminName.trim())) {
-                return true;
+    public Student getStudent(String name){
+        for (Student s : registeredStudents) {
+            if (s.getName().equalsIgnoreCase(name.trim())) {
+                return s;
             }
         }
-        return false;
+        return null;
+    }
+
+    public Admin getAdmin(String name){
+        for (Admin a : admins) {
+            if (a.getName().equalsIgnoreCase(name.trim())) {
+                return a;
+            }
+        }
+        return null;
     }
 
     public void removeBook(Book book){
@@ -54,6 +62,8 @@ public class Lib {
             if (books.contains(myBook)) {
                 myBook.borrow();
                 identity.addBook(myBook);
+                map.put(identity, identity.getBooksborrowed());
+                FileCSV.saveBorrowedBooks(map, BORRFILENAME);
                 removeBook(myBook);
             } else{
                 System.out.println("Book is unavailable!!");
@@ -68,12 +78,20 @@ public class Lib {
             System.out.println(title);
             System.out.print("Who is the author: ");
             String author = scanner.nextLine().toLowerCase().trim();
-            Book myBook = new Book(title, author);
+
+            Book myBook = null;
+            for (Book b : identity.getBooksborrowed()) {
+                if (b.getTitle().equalsIgnoreCase(title) && b.getAuthor().equalsIgnoreCase(author)) {
+                    myBook = b;
+                    break;
+                }
+            }
             
-            if (identity.checkBorrowed(title)) {
+            if (myBook != null) {
                 books.add(myBook);
                 FileCSV.saveBooks(books, LIBFILENAME);
                 identity.removeBook(myBook);
+                FileCSV.saveBorrowedBooks(map, BORRFILENAME);
                 System.out.println("Thank You...Come back next time!!\n");
             } else {
                 System.out.println("Sorry You didn't borrow that book from us!!\n");
@@ -117,7 +135,11 @@ public class Lib {
     }
 
     public void registerStudent(Student s){
-        registeredStudents.add(s);
-        FileCSV.registerStudents(registeredStudents, STDFILENAME);
+        if (getStudent(s.getName()) == null) {
+            registeredStudents.add(s);
+            FileCSV.registerStudents(registeredStudents, STDFILENAME);
+        } else {
+            System.out.println("Student already registered!");
+        }
     }
 }

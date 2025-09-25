@@ -40,6 +40,7 @@ public class FileCSV {
             for (Student student : students) {
                 writer.write(student.getId() + "," + student.getName() + "\n");
             }
+            System.out.println("Student registered successfully!!");
         } catch (IOException e) {
             System.out.println("Couldn't register student: " + e.getMessage());
         }
@@ -99,5 +100,69 @@ public class FileCSV {
             System.out.println("Error leading admins: " + e.getMessage());
         }
         return admins;
+    }
+
+    public static void saveBorrowedBooks(HashMap<Person, List<Book>> books, String filename){
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            writer.write("PersonId,PersonName,BookId,BookTitle,BookAuthor");
+            writer.newLine();
+
+            for (Map.Entry<Person, List<Book>> entry : books.entrySet()) {
+                Person p = entry.getKey();
+                List<Book> borrowed = entry.getValue();
+                
+                for (Book book : borrowed) {
+                    writer.write(p.getId() + "," + p.getName() + "," + book.getId() + "," + book.getTitle() + "," + book.getAuthor() + "\n");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error saving borrowed books: " + e.getMessage());
+        }
+    }
+
+    public static HashMap<Person, List<Book>> loadBorrowedBooks(String filename, List<Student> students, List<Admin> admins){
+        HashMap<Person, List<Book>> map = new HashMap<>();
+        File file = new File(filename);
+        if (!file.exists()) {
+            return map;
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line = reader.readLine();
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",", 5);
+                int id = Integer.parseInt(data[0]);
+                String name = data[1];
+                Person p = null;
+
+                for (Student student : students) {
+                   if (student.getId() == id && student.getName().equalsIgnoreCase(name)) {
+                        p=student;
+                        break;
+                   }
+                }
+
+                if (p == null) {
+                    for (Admin admin : admins) {
+                        if (admin.getId() == id && admin.getName().equalsIgnoreCase(name)) {
+                            p=admin;
+                            break;
+                        }
+                    }
+                }
+                if (p==null) {
+                    p = new Person(name);
+                    p.setId(id);
+                }
+
+                Book b = new Book(data[3], data[4]);
+                b.setId(Integer.parseInt(data[2]));                
+                map.computeIfAbsent(p, k-> new ArrayList<>()).add(b);
+            }
+        } catch (Exception e) {
+            System.out.println("Error loading map: " + e.getMessage());
+        }
+
+        return map;
     }
 }
