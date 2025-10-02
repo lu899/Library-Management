@@ -1,5 +1,5 @@
 public class Admin extends Person {
-    Admin(String name){
-        super(name);
+    Admin(int id, String name){
+        super(id, name);
     }
 }

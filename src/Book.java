@@ -1,13 +1,16 @@
-import java.util.Objects;
+import java.util.*;
+import javax.swing.*;
 
 public class Book {
     private String title;
     private String author;
     private int regId;
+    private String url;
 
-    Book(String title, String author){
+    Book(String title, String author, String url){
         this.author = author;
         this.title = title;
+        this.url = url;
     }
 
     public String getTitle(){
@@ -26,6 +29,10 @@ public class Book {
         return author;
     }
 
+    public String getUrl(){
+        return url;
+    }
+
     @Override
     public boolean equals(Object obj){
         if(this == obj) return true;
@@ -40,8 +47,6 @@ public class Book {
     }
     
     public void borrow(){
-        System.out.println("Book borrowed: " + title);
-        System.out.println("Author: " + author);
-        System.out.println("Happy Reading!!\n");
+        JOptionPane.showMessageDialog(null, "Happy Reading!!\n");
     }
 }

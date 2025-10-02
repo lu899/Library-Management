@@ -1,4 +1,5 @@
 import java.util.*;
+import javax.swing.*;
 
 public class Lib {
     private String name;
@@ -17,6 +18,12 @@ public class Lib {
     Lib(String name){
         this.name = name;
         map = FileCSV.loadBorrowedBooks(BORRFILENAME, registeredStudents, admins);
+        for (Map.Entry<Person, List<Book>> entry : map.entrySet()) {
+            Person p = entry.getKey();
+            List<Book> borrowed = entry.getValue();
+            p.getBooksborrowed().clear();
+            p.getBooksborrowed().addAll(borrowed);
+        }
     }
 
     public String getName(){
@@ -50,88 +57,56 @@ public class Lib {
         FileCSV.saveBooks(books, LIBFILENAME);
     }
 
-    public void borrowBook(Person identity, int numOfbooks, Scanner scanner){
-        while (numOfbooks > 0) {
-            System.out.print("\nEnter title of book: ");
-            String title = scanner.nextLine().toLowerCase().trim();
-            System.out.print("Who is the author: ");
-            String author = scanner.nextLine().toLowerCase().trim();
-            int bookId = random.nextInt(200);
-            Book myBook = new Book(title, author);
-            myBook.setId(bookId);
-            if (books.contains(myBook)) {
-                myBook.borrow();
-                identity.addBook(myBook);
-                map.put(identity, identity.getBooksborrowed());
-                FileCSV.saveBorrowedBooks(map, BORRFILENAME);
-                removeBook(myBook);
-            } else{
-                System.out.println("Book is unavailable!!");
-            }
-            numOfbooks--;
+    public List<Book> getBooks(){
+        return books;
+    }
+
+    public void borrowBook(Person identity, String title, String author, String url){
+        int bookId = random.nextInt(200);
+        Book myBook = new Book(title, author, url);
+        myBook.setId(bookId);
+
+        if (books.contains(myBook)) {
+            myBook.borrow();
+            identity.addBook(myBook);
+            map.put(identity, identity.getBooksborrowed());
+            FileCSV.saveBorrowedBooks(map, BORRFILENAME);
+            removeBook(myBook);
+        } else{
+            JOptionPane.showMessageDialog(null, "Book is unavailable!!");
         }
     }
 
-    public void returnBook(Person identity, Scanner scanner){
-            System.out.print("\nEnter title of book: ");
-            String title = scanner.nextLine().toLowerCase().trim();
-            System.out.println(title);
-            System.out.print("Who is the author: ");
-            String author = scanner.nextLine().toLowerCase().trim();
-
-            Book myBook = null;
-            for (Book b : identity.getBooksborrowed()) {
-                if (b.getTitle().equalsIgnoreCase(title) && b.getAuthor().equalsIgnoreCase(author)) {
-                    myBook = b;
-                    break;
-                }
+    public void returnBook(Person identity, String title, String author){
+        Book myBook = null;
+        String searchTitle = title.trim().toLowerCase();
+        String searchAuthor = author.trim().toLowerCase();
+       
+        for (Book b : identity.getBooksborrowed()) {           
+            if (b.getTitle().trim().toLowerCase().equals(searchTitle) &&
+                b.getAuthor().trim().toLowerCase().equals(searchAuthor)) {
+                myBook = b;
+                break;
             }
-            
-            if (myBook != null) {
-                books.add(myBook);
-                FileCSV.saveBooks(books, LIBFILENAME);
-                identity.removeBook(myBook);
-                FileCSV.saveBorrowedBooks(map, BORRFILENAME);
-                System.out.println("Thank You...Come back next time!!\n");
-            } else {
-                System.out.println("Sorry You didn't borrow that book from us!!\n");
-            }
+        }
         
-    }
-
-    public void addBook(int count, Scanner scanner){
-        while (count > 0) {
-            System.out.print("\nEnter title of book: ");
-            String title = scanner.nextLine().toLowerCase().trim();
-            System.out.print("Enter author: ");
-            String author = scanner.nextLine().toLowerCase().trim();
-            System.out.print("Enter number of book copies: ");
-            int num = scanner.nextInt();
-            scanner.nextLine();
-
-            for (int i = 0; i < num; i++) {
-                Book book = new Book(title, author);
-                int bookId = random.nextInt(500);
-                book.setId(bookId);
-                books.add(book);
-                FileCSV.saveBooks(books, LIBFILENAME);
-            }
-            count--;
-        }
-        System.out.println("Thank You for increacing our knowledge base 😊");
-    }
-
-    public void display(){
-        if (!books.isEmpty()) {
-            System.out.println("Books available:");
-            for (Book book : books) {
-                System.out.println("\nTitle: " + book.getTitle());
-                System.out.println("Author: " + book.getAuthor());
-                System.out.println("RegId: "  + book.getId());
-            }
+        if (myBook != null) {
+            books.add(myBook);
+            FileCSV.saveBooks(books, LIBFILENAME);
+            identity.removeBook(myBook);
+            FileCSV.saveBorrowedBooks(map, BORRFILENAME);
+            JOptionPane.showMessageDialog(null, "Thank You...Come back next time!!\n");
         } else {
-            System.out.println("No books in our library!!");
+            JOptionPane.showMessageDialog(null, "Sorry You didn't borrow that book from us!!\n");
         }
+    }
+
+    public void addBook(String title, String author, String imgPath){            
+        Book book = new Book(title, author, imgPath);
+        int bookId = random.nextInt(500);
+        book.setId(bookId);
+        books.add(book);
+        FileCSV.saveBooks(books, LIBFILENAME);           
     }
 
     public void registerStudent(Student s){
@@ -139,7 +114,7 @@ public class Lib {
             registeredStudents.add(s);
             FileCSV.registerStudents(registeredStudents, STDFILENAME);
         } else {
-            System.out.println("Student already registered!");
+            JOptionPane.showMessageDialog(null, "Student already registered!");
         }
     }
 }

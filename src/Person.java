@@ -6,16 +6,13 @@ public class Person {
     
     private ArrayList<Book> booksBorrowed = new ArrayList<>();
 
-    Person(String name){
+    Person(int id, String name){
         this.name = name;
+        this.regId = id;
     }
 
     public String getName(){
         return name;
-    }
-
-    public void setId(int regId){
-        this.regId = regId;
     }
 
     public int getId(){

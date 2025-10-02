@@ -1,4 +1,5 @@
-PersonId,PersonName,BookId,BookTitle,BookAuthor
-0,Lucy Kung'u,56,knowing god,j.i parker
-35,Emily Wafula,107,recursion,blake crouch
-35,Emily Wafula,75,good morning kenya,james njoroge
+PersonId,PersonName,BookId,BookTitle,BookAuthor,ImagePath
+0,Lucy Kung'u,185,Honey & Spice,Bobu Babalola,C:\Users\LUCY\OneDrive\Desktop\java\Library Management\src\Images\honey.jpg
+0,Lucy Kung'u,179,Recursion,Blake Crouch,C:\Users\LUCY\OneDrive\Desktop\java\Library Management\src\Images\recursion.jpg
+0,Lucy Kung'u,89,Recursion,Blake Crouch,C:\Users\LUCY\OneDrive\Desktop\java\Library Management\src\Images\recursion.jpg
+35,Emily Wafula,23,Harry Potter,J.K. Rowling,C:\Users\LUCY\OneDrive\Desktop\java\Library Management\src\Images\harry-potter.jpg

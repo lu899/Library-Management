@@ -1,14 +1,15 @@
 import java.util.*;
 import java.io.*;
+import javax.swing.*;
 
 public class FileCSV {
     public static void saveBooks(List<Book> books, String filename){
         try (FileWriter writer = new FileWriter(filename)) {
             for (Book book : books) {
-                writer.write(book.getId() + "," + book.getTitle() + "," + book.getAuthor() + '\n');
+                writer.write(book.getId() + "," + book.getTitle() + "," + book.getAuthor() + "," + book.getUrl() + '\n');
             }
         } catch (IOException e) {
-            System.out.println("Error: couldn't save books!!");
+            JOptionPane.showMessageDialog(null, "Error: couldn't save books!!");
         }
     }
 
@@ -23,14 +24,14 @@ public class FileCSV {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
-                if (data.length == 3) {
-                    Book b = new Book(data[1], data[2]);
+                if (data.length == 4) {
+                    Book b = new Book(data[1], data[2], data[3]);
                     b.setId(Integer.parseInt(data[0]));
                     books.add(b);
                 }
             }
         } catch (IOException e) {
-            System.out.println("Couldn't load books: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Couldn't load books: " + e.getMessage());
         }
         return books;
     }
@@ -40,9 +41,9 @@ public class FileCSV {
             for (Student student : students) {
                 writer.write(student.getId() + "," + student.getName() + "\n");
             }
-            System.out.println("Student registered successfully!!");
+            JOptionPane.showMessageDialog(null, "Student registered successfully!!");
         } catch (IOException e) {
-            System.out.println("Couldn't register student: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Couldn't register student: " + e.getMessage());
         }
     }
 
@@ -58,13 +59,12 @@ public class FileCSV {
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
                 if (data.length == 2) {
-                    Student s = new Student(data[1]);
-                    s.setId(Integer.parseInt(data[0]));
+                    Student s = new Student(Integer.parseInt(data[0]), data[1]);
                     students.add(s);
                 }
             }
         } catch (Exception e) {
-            System.out.println("Error leading Students: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error leading Students: " + e.getMessage());
         }
         return students;
     }
@@ -75,7 +75,7 @@ public class FileCSV {
                 writer.write(admin.getId() + "," + admin.getName() + "\n");
             }
         } catch (IOException e) {
-            System.out.println("Couldn't register student: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Couldn't register student: " + e.getMessage());
         }
     }
 
@@ -91,20 +91,19 @@ public class FileCSV {
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
                 if (data.length == 2) {
-                    Admin a = new Admin(data[1]);
-                    a.setId(Integer.parseInt(data[0]));
+                    Admin a = new Admin(Integer.parseInt(data[0]), data[1]);
                     admins.add(a);
                 }
             }
         } catch (Exception e) {
-            System.out.println("Error leading admins: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error leading admins: " + e.getMessage());
         }
         return admins;
     }
 
     public static void saveBorrowedBooks(HashMap<Person, List<Book>> books, String filename){
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-            writer.write("PersonId,PersonName,BookId,BookTitle,BookAuthor");
+            writer.write("PersonId,PersonName,BookId,BookTitle,BookAuthor,ImagePath");
             writer.newLine();
 
             for (Map.Entry<Person, List<Book>> entry : books.entrySet()) {
@@ -112,11 +111,11 @@ public class FileCSV {
                 List<Book> borrowed = entry.getValue();
                 
                 for (Book book : borrowed) {
-                    writer.write(p.getId() + "," + p.getName() + "," + book.getId() + "," + book.getTitle() + "," + book.getAuthor() + "\n");
+                    writer.write(p.getId() + "," + p.getName() + "," + book.getId() + "," + book.getTitle() + "," + book.getAuthor() + "," + book.getUrl() + "\n");
                 }
             }
         } catch (Exception e) {
-            System.out.println("Error saving borrowed books: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error saving borrowed books: " + e.getMessage());
         }
     }
 
@@ -130,7 +129,7 @@ public class FileCSV {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line = reader.readLine();
             while ((line = reader.readLine()) != null) {
-                String[] data = line.split(",", 5);
+                String[] data = line.split(",", 6);
                 int id = Integer.parseInt(data[0]);
                 String name = data[1];
                 Person p = null;
@@ -151,16 +150,15 @@ public class FileCSV {
                     }
                 }
                 if (p==null) {
-                    p = new Person(name);
-                    p.setId(id);
+                    p = new Person(id, name);
                 }
 
-                Book b = new Book(data[3], data[4]);
+                Book b = new Book(data[3], data[4], data[5]);
                 b.setId(Integer.parseInt(data[2]));                
                 map.computeIfAbsent(p, k-> new ArrayList<>()).add(b);
             }
         } catch (Exception e) {
-            System.out.println("Error loading map: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error loading map: " + e.getMessage());
         }
 
         return map;
